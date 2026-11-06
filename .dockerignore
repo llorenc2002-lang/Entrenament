@@ -1,0 +1,14 @@
+.venv
+__pycache__
+*.py[cod]
+data
+logs
+serra-data
+serra-logs
+outputs
+work
+render-secrets.txt
+serra-plan.xlsx
+.env
+.git
+
