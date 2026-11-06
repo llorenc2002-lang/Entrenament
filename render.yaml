@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: serra-training
+    runtime: docker
+    plan: starter
+    region: frankfurt
+    healthCheckPath: /api/health
+    envVars:
+      - key: TZ
+        value: Europe/Madrid
+      - key: SERRA_COOKIE_SECURE
+        value: "1"
+      - key: SERRA_APP_PASSWORD
+        sync: false
+      - key: SERRA_ENCRYPTION_KEY
+        sync: false
+      - key: SERRA_SESSION_SECRET
+        generateValue: true
+    disk:
+      name: serra-data
+      mountPath: /app/data
+      sizeGB: 1
+
