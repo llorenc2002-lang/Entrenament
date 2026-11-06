@@ -1,0 +1,17 @@
+.venv/
+data/
+logs/
+serra-data/
+serra-logs/
+__pycache__/
+*.py[cod]
+.env
+.env.*
+!.env.example
+outputs/
+work/
+serra-plan.xlsx
+render-secrets.txt
+serra-public-source.zip
+
+
