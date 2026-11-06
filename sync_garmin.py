@@ -190,7 +190,8 @@ def export_daily(client: Garmin, days: int) -> int:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Sync Garmin Connect data to the local data folder.")
     parser.add_argument("--interactive", action="store_true", help="prompt locally for Garmin sign-in and MFA")
-    parser.add_argument("--since", default="2026-10-01", help="export activities on or after this date (default: 2026-10-01)")
+    default_since = (date.today() - timedelta(days=365)).isoformat()
+    parser.add_argument("--since", default=default_since, help=f"export activities on or after this date (default: {default_since})")
     parser.add_argument("--days", type=int, default=36, help="daily health history to export (default: 36)")
     args = parser.parse_args()
     if args.days < 1 or args.days > 3650:
@@ -218,4 +219,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

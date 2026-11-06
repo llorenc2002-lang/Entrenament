@@ -1,6 +1,6 @@
-# Serra · entrenamiento y recuperación
+# Lolo Training App · entrenamiento y recuperación
 
-Serra cruza un plan de entrenamiento con actividades y métricas de Garmin Connect. Incluye una interfaz adaptable a ordenador y móvil, importación de documentos y una pantalla de chat para consultar el plan y los datos sincronizados.
+Lolo Training App cruza un plan de entrenamiento con actividades y métricas de Garmin Connect. Incluye una interfaz adaptable a ordenador y móvil, importación de documentos y una pantalla de chat para consultar el plan y los datos sincronizados.
 
 ## Funciones
 
@@ -14,13 +14,12 @@ Serra cruza un plan de entrenamiento con actividades y métricas de Garmin Conne
 
 Consulta [README_LOCAL_APP.md](README_LOCAL_APP.md). El flujo local mantiene los datos en `data/` y permite trabajar sin publicar la app.
 
-## Publicar para uso personal
+## Acceder desde PC y móvil sin pagar
 
-La guía para Render y para alojar la app en un servidor propio está en [README_DEPLOYMENT_PRIVATE.md](README_DEPLOYMENT_PRIVATE.md). La instancia está diseñada para un solo usuario y requiere contraseña. No es un servicio multiusuario.
+Consulta [README_ACCESO_WEB_GRATIS.md](README_ACCESO_WEB_GRATIS.md) y ejecuta `INICIAR_APP_WEB.cmd`. Esto publica el servidor de este ordenador mediante una dirección HTTPS temporal; el ordenador debe quedarse encendido y conectado. La app pide un código al correo que indiques y una contraseña privada. No es un alojamiento permanente.
 
-Antes de conectar Garmin, iniciar sesión en la instancia privada. No publiques `data/`, `logs/`, `outputs/`, `work/`, secretos ni documentos personales. Al enviar una pregunta al chat, Serra comparte con OpenAI el resumen de Garmin, el plan y los documentos importados según el aviso de privacidad de la app.
+Para una dirección estable y disponibilidad continua haría falta una cuenta de alojamiento permanente y posiblemente un dominio. La app de uso personal no es multiusuario. No publiques `data/`, `logs/`, `outputs/`, `work/`, secretos ni documentos personales. Al enviar una pregunta al chat, Lolo Training App comparte con OpenAI el resumen de Garmin, el plan y los documentos importados según el aviso de privacidad de la app.
 
 ## Licencia
 
 MIT. Consulta [LICENSE](LICENSE).
-

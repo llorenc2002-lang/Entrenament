@@ -1,4 +1,4 @@
-"""Authorize the hosted Serra instance with the official ChatGPT OSS OAuth flow.
+"""Authorize the hosted Lolo Training App instance with the official ChatGPT OSS OAuth flow.
 
 Run locally on the same computer as the browser. The output bundle is encrypted
 with a passphrase and is intended to be uploaded to the protected app over HTTPS.
@@ -81,7 +81,7 @@ def main() -> int:
         "code_challenge_method": "S256", "code_challenge": challenge,
     }
     if requested_client_id == "dynamic_agent_client":
-        params["agent_name_hint"] = "Serra Training"
+        params["agent_name_hint"] = "Lolo Training App"
     try:
         server = HTTPServer(("127.0.0.1", 1455), CallbackHandler)
     except OSError:
@@ -163,7 +163,7 @@ def main() -> int:
     ciphertext = AESGCM(key).encrypt(iv, json.dumps(credentials, separators=(",", ":")).encode(),
                                     b"Serra ChatGPT credential transfer v1")
     bundle = {"version": 1, "salt": b64url(salt), "nonce": b64url(iv), "ciphertext": b64url(ciphertext)}
-    output = ROOT / "outputs" / "serra-chatgpt-credentials.enc"
+    output = ROOT / "outputs" / "lolo-training-chatgpt-credentials.enc"
     output.parent.mkdir(exist_ok=True)
     output.write_text(json.dumps(bundle, separators=(",", ":")), encoding="utf-8")
     registration_file.write_text(json.dumps({"client_id": client_id}, separators=(",", ":")), encoding="utf-8")
@@ -174,4 +174,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

@@ -1,4 +1,4 @@
-"""Optional cloud integrations and document readers for Serra.
+"""Optional cloud integrations and document readers for Lolo Training App.
 
 Secrets are encrypted at rest with a deployment key supplied out of band via
 SERRA_ENCRYPTION_KEY. Never log request bodies or bearer credentials.
@@ -78,7 +78,7 @@ def save_garmin_key(api_key: str) -> None:
         raise ValueError("La clave de Garmin no parece válida.")
     # Validate the key without persisting the bearer token. The SDK's cache is
     # redirected to a temporary file and removed as soon as validation ends.
-    with tempfile.TemporaryDirectory(prefix="serra-garmin-") as tmp:
+    with tempfile.TemporaryDirectory(prefix="lolo-training-garmin-") as tmp:
         cache = Path(tmp) / "token.json"
         with PersonalApiAuthenticator(bearer_token_cache_file=cache) as auth:
             token = auth.obtain_token(key, force_refresh=True)
@@ -91,7 +91,7 @@ def _garmin_client():
     secret = _read_secret(GARMIN_KEY_FILE)
     if not secret or not secret.get("api_key"):
         raise RuntimeError("Conecta primero la clave Personal API de Garmin en Ajustes.")
-    temp = tempfile.TemporaryDirectory(prefix="serra-garmin-")
+    temp = tempfile.TemporaryDirectory(prefix="lolo-training-garmin-")
     cache = Path(temp.name) / "token.json"
     auth = PersonalApiAuthenticator(bearer_token_cache_file=cache)
     token = auth.obtain_token(secret["api_key"], force_refresh=True)
@@ -362,4 +362,3 @@ def ask_chatgpt(prompt: str, context: dict[str, Any]) -> str:
     if not result:
         raise RuntimeError("ChatGPT no devolvió texto.")
     return result
-

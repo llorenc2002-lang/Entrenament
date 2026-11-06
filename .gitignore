@@ -13,5 +13,6 @@ work/
 serra-plan.xlsx
 render-secrets.txt
 serra-public-source.zip
-
+tools/cloudflared*.exe
+tools/cloudflared-download.tmp
 

@@ -431,9 +431,9 @@ def _session_token() -> str:
 def _login_html(error: str = "") -> bytes:
     message = f'<p role="alert" style="color:#a43232">{error}</p>' if error else ""
     return ("<!doctype html><html lang=es><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'>"
-            "<title>Acceso · Serra</title><body style='font:16px system-ui;background:#f4f6f3;display:grid;min-height:95vh;place-items:center'>"
+            "<title>Acceso · Lolo Training App</title><body style='font:16px system-ui;background:#f4f6f3;display:grid;min-height:95vh;place-items:center'>"
             "<form method=post action=/login style='background:white;padding:28px;border-radius:16px;width:min(360px,86vw);box-shadow:0 6px 30px #0001'>"
-            "<h1 style='font-size:22px'>Serra · Entrenamiento</h1><p>Accede a tu panel privado.</p>" + message +
+            "<h1 style='font-size:22px'>Lolo Training App</h1><p>Accede a tu panel privado.</p>" + message +
             "<label>Contraseña<input name=password type=password required autocomplete=current-password style='display:block;width:100%;padding:12px;margin:8px 0 16px'></label>"
             "<button style='padding:11px 16px;background:#18744d;color:white;border:0;border-radius:8px'>Entrar</button></form></body></html>").encode("utf-8")
 
@@ -461,7 +461,7 @@ def _daily_garmin_sync():
 
 
 class Handler(BaseHTTPRequestHandler):
-    server_version = "Serra/0.2"
+    server_version = "LoloTrainingApp/0.2"
 
     def log_message(self, fmt, *args):
         logging.info("%s %s", self.client_address[0], fmt % args)
@@ -526,7 +526,10 @@ class Handler(BaseHTTPRequestHandler):
             except RuntimeError as exc:
                 return self._json(200, {"garmin": {"connected": False}, "chatgpt": {"connected": False}, "configuration_error": str(exc)})
         static_files = {"/manifest.webmanifest": ("manifest.webmanifest", "application/manifest+json; charset=utf-8"),
-                        "/icon.svg": ("icon.svg", "image/svg+xml"), "/sw.js": ("sw.js", "text/javascript; charset=utf-8")}
+                        "/icon.svg": ("icon.svg", "image/svg+xml"),
+                        "/icon-192.png": ("icon-192.png", "image/png"),
+                        "/icon-512.png": ("icon-512.png", "image/png"),
+                        "/sw.js": ("sw.js", "text/javascript; charset=utf-8")}
         if route in static_files:
             filename, content_type = static_files[route]
             body = (WEB / filename).read_bytes()
@@ -723,7 +726,7 @@ def main():
         raise RuntimeError("El modo de alojamiento necesita SERRA_SESSION_SECRET (32 caracteres como mínimo).")
     if PUBLIC_MODE and len(os.environ.get("SERRA_APP_PASSWORD", "")) < 20:
         raise RuntimeError("La contraseña remota debe tener al menos 20 caracteres.")
-    if PUBLIC_MODE and HOST in ("127.0.0.1", "localhost", "::1"):
+    if PUBLIC_MODE and HOST in ("127.0.0.1", "localhost", "::1") and not os.environ.get("SERRA_TUNNEL_MODE"):
         logging.warning("SERRA_APP_PASSWORD está definido pero SERRA_HOST sigue siendo loopback; el alojamiento no será accesible externamente.")
     try:
         server = ThreadingHTTPServer((HOST, PORT), Handler)
@@ -746,5 +749,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-
 

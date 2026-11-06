@@ -1,13 +1,14 @@
 {
-  "name": "Serra · Entrenamiento",
-  "short_name": "Serra",
+  "name": "Lolo Training App",
+  "short_name": "Lolo Training",
   "description": "Panel personal de entrenamiento y recuperación",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f4f6f3",
   "theme_color": "#18744d",
   "icons": [
-    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
   ]
 }
-
