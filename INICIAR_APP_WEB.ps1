@@ -76,7 +76,7 @@ try {
     New-Item -ItemType Directory -Path $dataDir -Force | Out-Null
     $encryptionKeyFile = Join-Path $dataDir 'local_encryption.key'
     if (-not (Test-Path -LiteralPath $encryptionKeyFile)) {
-        $newKey = (& $Python -c 'from cryptography.fernet import Fernet; print(Fernet.generate_key().decode("ascii"))').Trim()
+        $newKey = (& $Python -c 'from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())').Trim()
         if ($LASTEXITCODE -ne 0 -or $newKey.Length -ne 44) { throw 'No se pudo preparar la clave de cifrado local.' }
         Set-Content -LiteralPath $encryptionKeyFile -Value $newKey -NoNewline -Encoding ascii
     }
