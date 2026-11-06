@@ -60,6 +60,9 @@
 </div>
 <script>
 'use strict';
+if(location.protocol==='file:'){
+  document.querySelector('.app').innerHTML='<main style="padding:32px;max-width:720px;margin:auto;font:16px/1.55 system-ui"><h1>Lolo Training App</h1><p>Esta página se abrió como un archivo local y no puede guardar claves ni cargar tus datos.</p><p>Para usar la app desde internet, cierra esta pestaña y haz doble clic en <strong>INICIAR_APP_WEB.cmd</strong> dentro de la carpeta del proyecto. Cuando aparezca la dirección HTTPS, abre esa dirección en el navegador.</p><p>No introduzcas aquí tu clave de Garmin ni selecciones documentos.</p></main>';
+}else{
 const state={data:null,weekOffset:0,metric:'km',chat:[]};
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -100,6 +103,7 @@ $('#garmin-sync').addEventListener('click',async e=>{const b=e.currentTarget;b.d
 function addChat(role,text){state.chat.push({role,text});$('#chat-messages').innerHTML=state.chat.map(x=>`<div class="chatbubble ${x.role}"><b>${x.role==='user'?'Tú':'ChatGPT'}</b><div class="chattext"></div></div>`).join('');$$('.chattext').forEach((el,i)=>el.textContent=state.chat[i].text);$('#chat-messages').scrollTop=$('#chat-messages').scrollHeight}
 $('#chat-form').addEventListener('submit',async e=>{e.preventDefault();const input=$('#chat-input'),button=$('#chat-send'),message=input.value.trim();if(!message)return;addChat('user',message);input.value='';button.disabled=true;button.textContent='Pensando…';try{const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message})}),d=await r.json();if(!r.ok)throw new Error(d.error||'No se pudo obtener respuesta');addChat('assistant',d.answer)}catch(err){addChat('assistant',`No he podido responder: ${err.message}`)}finally{button.disabled=false;button.textContent='Enviar'}});
 $('#stop-app').addEventListener('click',async()=>{await fetch('/api/shutdown',{method:'POST'});document.body.innerHTML='<main style="padding:40px;font:16px system-ui">App cerrada. Puedes cerrar esta pestaña.</main>'});loadIntegrations();load();
+}
 </script>
 </body>
 </html>
