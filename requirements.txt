@@ -1,0 +1,8 @@
+garminconnect==0.3.20
+garmin-connect-personal-api-python==1.0.0
+cryptography>=45.0.0
+pypdf>=6.0.0
+python-docx>=1.2.0
+PyJWT[crypto]>=2.10.0
+tzdata>=2025.2
+
