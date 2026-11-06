@@ -98,11 +98,29 @@ try {
         Move-Item -LiteralPath $download -Destination $Cloudflared -Force
     }
 
-    $portProbe = [Net.Sockets.TcpClient]::new()
-    try { $portProbe.Connect('127.0.0.1', 8765); $portBusy = $true }
-    catch { $portBusy = $false }
-    finally { $portProbe.Dispose() }
-    if ($portBusy) { throw 'El puerto 8765 ya está ocupado. Cierra la app local antes de iniciar esta versión web.' }
+    $listener = Get-NetTCPConnection -LocalPort 8765 -State Listen -ErrorAction SilentlyContinue | Select-Object -First 1
+    if ($listener) {
+        $owner = Get-CimInstance Win32_Process -Filter "ProcessId = $($listener.OwningProcess)" -ErrorAction SilentlyContinue
+        $pythonw = Join-Path $ProjectRoot '.venv\Scripts\pythonw.exe'
+        $expectedExecutables = @($Python, $pythonw)
+        $sameProjectApp = $owner -and ($expectedExecutables -contains $owner.ExecutablePath) -and ($owner.CommandLine -match 'local_training_app\.py')
+        if (-not $sameProjectApp) {
+            throw 'El puerto 8765 lo usa otro programa. Cierra ese programa y vuelve a ejecutar este iniciador.'
+        }
+        Write-Host 'Cerrando la instancia local anterior para iniciar la versión web protegida…'
+        try {
+            Invoke-WebRequest -Uri 'http://127.0.0.1:8765/api/shutdown' -Method Post -ContentType 'application/json' -Body '{}' -TimeoutSec 3 | Out-Null
+        } catch {
+            throw 'La instancia local anterior no se pudo cerrar automáticamente. Abre http://127.0.0.1:8765 y pulsa «Cerrar la app local» en Conexiones.'
+        }
+        $released = $false
+        for ($i = 0; $i -lt 20; $i++) {
+            Start-Sleep -Milliseconds 500
+            $listener = Get-NetTCPConnection -LocalPort 8765 -State Listen -ErrorAction SilentlyContinue | Select-Object -First 1
+            if (-not $listener) { $released = $true; break }
+        }
+        if (-not $released) { throw 'La instancia local anterior sigue ocupando el puerto 8765. Cierra http://127.0.0.1:8765 y vuelve a intentarlo.' }
+    }
 
     $env:SERRA_HOST = '127.0.0.1'
     $env:SERRA_PORT = '8765'

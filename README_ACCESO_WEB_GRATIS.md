@@ -16,6 +16,8 @@ La primera vez descarga `cloudflared` desde la publicación oficial de Cloudflar
 
 Mantén el ordenador encendido, conectado a internet y con esa ventana abierta mientras uses la app. Al cerrar o reiniciar el túnel, la dirección cambia; vuelve a abrir el iniciador y guarda la nueva dirección. El ordenador conserva los datos. No borres `data/` ni `%LOCALAPPDATA%\LoloTrainingApp`.
 
+Si la app local anterior ocupa el puerto 8765, el iniciador intenta cerrarla de forma normal antes de arrancar la instancia web protegida. Si el puerto lo usa otro programa, cierra ese programa y vuelve a intentarlo.
+
 ## Instalar en el móvil
 
 Abre la dirección vigente en Chrome o Edge mientras el túnel está activo y usa **Instalar aplicación** o **Añadir a pantalla de inicio**. Como la dirección temporal cambia al reiniciar, puede hacer falta instalarla de nuevo con el enlace nuevo.
