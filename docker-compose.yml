@@ -1,0 +1,45 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    environment:
+      SERRA_HOST: 0.0.0.0
+      SERRA_PORT: 8765
+      SERRA_APP_PASSWORD: ${SERRA_APP_PASSWORD:?set a strong app password in .env}
+      SERRA_SESSION_SECRET: ${SERRA_SESSION_SECRET:?set a random session secret in .env}
+      SERRA_ENCRYPTION_KEY: ${SERRA_ENCRYPTION_KEY:?set a Fernet encryption key in .env}
+      SERRA_COOKIE_SECURE: "1"
+    volumes:
+      - ./serra-data:/app/data
+      - ./serra-logs:/app/logs
+    expose:
+      - "8765"
+    networks:
+      - private
+
+  proxy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      SERRA_DOMAIN: ${SERRA_DOMAIN:?set your domain in .env}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    networks:
+      - private
+    depends_on:
+      - app
+
+networks:
+  private:
+    driver: bridge
+
+volumes:
+  caddy-data:
+  caddy-config:
+
