@@ -18,20 +18,6 @@ function New-RandomHex([int] $ByteCount) {
     return ([BitConverter]::ToString($bytes) -replace '-', '').ToLowerInvariant()
 }
 
-function New-AppPassword {
-    $alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789'
-    $result = [System.Text.StringBuilder]::new()
-    $bytes = New-Object byte[] 4
-    $rng = [System.Security.Cryptography.RandomNumberGenerator]::Create()
-    for ($i = 0; $i -lt 36; $i++) {
-        $rng.GetBytes($bytes)
-        $index = [BitConverter]::ToUInt32($bytes, 0) % $alphabet.Length
-        [void]$result.Append($alphabet[[int]$index])
-    }
-    $rng.Dispose()
-    return $result.ToString()
-}
-
 function Save-ProtectedValue([string] $Name, [string] $Value) {
     $secure = ConvertTo-SecureString -String $Value -AsPlainText -Force
     $encrypted = ConvertFrom-SecureString -SecureString $secure
@@ -43,6 +29,12 @@ function Read-ProtectedValue([string] $Name) {
     $encrypted = Get-Content -LiteralPath $path -Raw
     $secure = ConvertTo-SecureString -String $encrypted
     $pointer = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secure)
+    try { return [Runtime.InteropServices.Marshal]::PtrToStringBSTR($pointer) }
+    finally { [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($pointer) }
+}
+
+function ConvertTo-PlainText([System.Security.SecureString] $Value) {
+    $pointer = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($Value)
     try { return [Runtime.InteropServices.Marshal]::PtrToStringBSTR($pointer) }
     finally { [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($pointer) }
 }
@@ -59,11 +51,22 @@ try {
     $newPassword = $false
     $passwordPath = Join-Path $LocalState 'app-password.dpapi'
     if (-not (Test-Path -LiteralPath $passwordPath)) {
-        $password = New-AppPassword
+        while ($true) {
+            $first = ConvertTo-PlainText (Read-Host 'Crea una contraseña de acceso de 20 caracteres o más' -AsSecureString)
+            if ($first.Length -lt 20) {
+                Write-Host 'Debe tener al menos 20 caracteres.' -ForegroundColor Yellow
+                continue
+            }
+            $second = ConvertTo-PlainText (Read-Host 'Repítela para confirmarla' -AsSecureString)
+            if ($first -cne $second) {
+                Write-Host 'Las contraseñas no coinciden; inténtalo de nuevo.' -ForegroundColor Yellow
+                continue
+            }
+            $password = $first
+            break
+        }
         Save-ProtectedValue 'app-password' $password
         $newPassword = $true
-        Write-Host 'Contraseña privada de la app (guárdala; solo se muestra esta vez):' -ForegroundColor Yellow
-        Write-Host $password -ForegroundColor Yellow
     } else { $password = Read-ProtectedValue 'app-password' }
 
     if (-not (Test-Path -LiteralPath (Join-Path $LocalState 'session-secret.dpapi'))) {
